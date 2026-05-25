@@ -329,20 +329,18 @@ private:
     sf::Clock aiClock;            // นาฬิกาจับเวลาเพื่อหน่วงการตัดสินใจของบอท
     int lastPlayedIdx;            // เก็บว่าใครคือคนสุดท้ายที่ลงไพ่ได้
 
-    // ย้ายเทิร์นไปยังผู้เล่นคนถัดไป
+    // ย้ายเทิร์นไปคนถัดไป
     void NextTurn() {
         if (gameOver) return;
 
-        // ถ้ามีใครไพ่หมดมือ ให้จบเกม
-        bool allEmpty = true;
+        // ถ้ามีใครไพ่หมดมือ ให้จบเกมทันที
         for (Player* p : players) {
-            if (!p->getHand().empty()) allEmpty = false;
-        }
-        if (allEmpty || players[0]->getHand().empty()) {
-            gameOver = true;
-            winner = players[turnIdx]->getName();
-            actionMsg = winner + " has won the game!";
-            return;
+            if (p->getHand().empty()) {
+                gameOver = true;
+                winner = p->getName(); // ประกาศชื่อคนที่ไพ่หมดเป็นผู้ชนะ
+                actionMsg = winner + " has won the game!";
+                return;
+            }
         }
 
         // จบรอบนับว่าเหลือคนที่ยังไม่ผ่านกี่คน
@@ -353,9 +351,9 @@ private:
 
         // ถ้าทุกคนผ่านหมดให้เริ่มรอบใหม่
         if (activeCount <= 1) {
-            ClearBoard(); // เคลียร์ไพ่บนโต๊ะทิ้ง
-            for (Player* p : players) p->setPassed(false); // ล้างสถานะผ่านให้ทุกคน
-            turnIdx = lastPlayedIdx; // ให้คนล่าสุดที่ลงไพ่เริ่มก่อน
+            ClearBoard();
+            for (Player* p : players) p->setPassed(false);
+            turnIdx = lastPlayedIdx;
             actionMsg = players[turnIdx]->getName() + " won the trick. Lead any combo.";
             
             // ข้ามคนที่ไพ่หมดมือไปแล้ว
@@ -373,13 +371,13 @@ private:
                 break;
             }
         }
-        turnIdx = nextIdx; // เปลี่ยนเทิร์น
-        aiClock.restart(); // รีเซ็ตเวลาให้ AI คิดใหม่
+        turnIdx = nextIdx;
+        aiClock.restart();
     }
 
 public:
     // Constructor
-    GameEngine() : turnIdx(0), gameOver(false), winner(""), actionMsg("Welcome to Ultimate Slave!"), lastPlayedIdx(-1) {
+    GameEngine() : turnIdx(0), gameOver(false), winner(""), actionMsg("Welcome to LormWong SLAVE!"), lastPlayedIdx(-1) {
         players.push_back(new HumanPlayer("You"));
         players.push_back(new AIPlayer("Bot 2"));
         players.push_back(new AIPlayer("Bot 3"));
@@ -604,7 +602,7 @@ int main() {
     settings.antiAliasingLevel = 8;
     sf::RenderWindow window(
         sf::VideoMode({SCREEN_WIDTH, SCREEN_HEIGHT}), 
-        "Ultimate Slave - Encapsulated Version", 
+        "LormWong SLAVE", 
         sf::State::Windowed, 
         settings
     );
@@ -751,7 +749,7 @@ int main() {
             sf::FloatRect rulesRect({SCREEN_WIDTH / 2.f - 350.f, 80.f}, {700.f, 560.f});
             DrawRectangleShapeRounded(window, rulesRect, 15.f, DARK_BG, GOLD_H, 3.0f);
 
-            sf::Text titleText(font, "ULTIMATE SLAVE", 40);
+            sf::Text titleText(font, "LormWong SLAVE", 40);
             titleText.setFillColor(GOLD_H);
             titleText.setStyle(sf::Text::Bold);
             sf::FloatRect titleBounds = titleText.getLocalBounds();
